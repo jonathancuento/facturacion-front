@@ -11,7 +11,6 @@ import { ModalGetProduct } from "./ModalGetProduct";
 import { calcTotal, calcTotalProductos, generateOrder, getObjectById } from "./utils";
 
 export const SaleDescription = ({ data, clients, productos }) => {
-  console.log('productos en sale: ', productos);
   const params = useParams();
   const [currentFactura, setCurrentFactura] = React.useState(
     params?.id ? getObjectById(data, "numeroFactura", params?.id) :
@@ -109,7 +108,6 @@ export const SaleDescription = ({ data, clients, productos }) => {
 
   const handleCantidadChange = (value, index) => {
     let valToUpdate = value;
-    console.log('value: ', value);
     if(isNaN(valToUpdate)) {
       valToUpdate=0;
       return;
@@ -152,19 +150,13 @@ export const SaleDescription = ({ data, clients, productos }) => {
     }
     if (params?.id) {
       axios.put(`${baseURL}/bills/${params?.id}`, dataToSend, customConfig).then((response) => {
-          console.log(response);
           window.location.href = "/";
         });
     } else {
       axios.post(`${baseURL}/bills`, dataToSend, customConfig).then((response) => {
-        console.log(response);
         window.location.href = "/";
       });
     }
-    // axios.get(`${baseURL}/bills`).then((response) => {
-    //   // console.log('bills', response.data);
-    //   setFacturas(response.data.data);
-    // });
   }
   
 

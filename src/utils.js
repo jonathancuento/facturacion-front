@@ -25,7 +25,6 @@ const getMaxId = (objects) => {
   export const generateOrder = (data) => {
     const today = new Date().toISOString().slice(0, 10);
     const currentId = getMaxId(data) + 1;
-    console.log('currentId', currentId);
     return {
       "numeroFactura": currentId,
       "fechaFactura": today,

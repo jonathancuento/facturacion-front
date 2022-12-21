@@ -10,6 +10,7 @@ import { SaleDescription } from "./SaleDescription";
 import { SaleScreen } from "./SaleScreen";
 import { UsersScreen } from "./UsersScreen";
 import { baseURL } from "./constants/constants";
+import { ProductsScreen } from "./ProductsScreen";
 
 function App() {
   const [clientes, setClientes] = useState([]);
@@ -28,9 +29,6 @@ function App() {
     });
   }, []);
 
-  console.log("clientes", clientes);
-  console.log("facturas", facturas);
-  console.log("productos", productos);
   return (
     <div className="App">
       <Navbar />
@@ -47,7 +45,8 @@ function App() {
             clients={clientes}
             productos={productos}/>
         } />
-        <Route path="/usuarios" element={<UsersScreen />} />
+        <Route path="/usuarios" element={<UsersScreen data={clientes} />} />
+        <Route path="/productos" element={<ProductsScreen data={productos} />} />
         <Route path="/" element={<SaleScreen data={facturas} />} />
       </Routes>
     </div>

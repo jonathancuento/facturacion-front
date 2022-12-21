@@ -17,14 +17,12 @@ export const SaleScreen = ({data}) => {
   };
 
   const handleDelete = (id) => {
-    console.log(id);
     const customConfig = {
       headers: {
         'Accept': '*/*', 'Content-Type': 'application/json',
       }
     };
     axios.delete(`http://localhost:3001/api/bills/${id}`, customConfig).then((response) => {
-      console.log(response);
     });
     window.location.href = "/";
   };
