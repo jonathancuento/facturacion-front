@@ -4,7 +4,6 @@ import { facturasColumns } from "./constants/facturas";
 import { CustomTable } from "./CustomTable";
 
 export const SaleScreen = ({data}) => {
-  console.log(data);
   const [filterText, setFilterText] = React.useState("");
   const navigate = useNavigate();
 
@@ -48,7 +47,10 @@ export const SaleScreen = ({data}) => {
     <div>
       <div class="card m-2">
         <div class="card-body d-flex flex-row justify-content-between">
-          <h4>Órdenes de venta</h4>
+          <div className="d-flex flex-row">
+            <h4>Órdenes de venta</h4>
+            <button type="button" class="btn btn-primary mx-3">+ Agrega</button>
+          </div>
           <form class="d-flex">
             <input
               class="form-control me-2"

@@ -190,20 +190,12 @@ export const facturasColumns = [
         label: 'Numero de Factura',
     },
     {
-        id: 'fecha',
+        id: 'fechaFactura',
         label: 'Fecha',
     },
     {
-        id: 'cliente',
+        id: 'cedulaCliente',
         label: 'Cliente',
-    },
-    {
-        id: 'vendedor',
-        label: 'Vendedor',
-    },
-    {
-        id: 'estado',
-        label: 'Estado',
     },
     {
         id: 'total',

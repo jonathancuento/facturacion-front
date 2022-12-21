@@ -10,6 +10,7 @@ import { ModalGetProduct } from "./ModalGetProduct";
 import { calcTotal, calcTotalProductos, getObjectById } from "./utils";
 
 export const SaleDescription = ({ data, clients, productos }) => {
+  console.log('productos en sale: ', productos);
   const params = useParams();
   const [currentFactura, setCurrentFactura] = React.useState(
     getObjectById(data, "numeroFactura", params?.id)

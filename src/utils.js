@@ -1,6 +1,4 @@
 export const getObjectById = (objects, key, id) => {
-    console.log({objects, key, id})
-    console.log()
     return objects.find((object) => {
         return String(object[key]) === String(id)
     });

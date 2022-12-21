@@ -13,8 +13,6 @@ const divideData = (data, pageNumber) => {
 export const CustomTable = ({ colums = [], data = [], pageNumber=6}) => {
   const [activePage, setActivePage] = React.useState(0);
   const divideDataValue = divideData(data, pageNumber) || [];
-  console.log(activePage);
-  console.log(divideDataValue.length);
 
   return (
     <div>
