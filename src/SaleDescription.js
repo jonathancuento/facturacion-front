@@ -1,19 +1,21 @@
+import axios from "axios";
 import React from "react";
 import { useParams } from "react-router-dom";
 import { clientesColumns } from "./constants/clientes";
+import { baseURL } from "./constants/constants";
 import { facturasColumns, productosFacturaColumns } from "./constants/facturas";
 import { productosColumns } from "./constants/productos";
 import { CustomTable } from "./CustomTable";
 import { ModalGetClient } from "./ModalGetClient";
-// import { ModalGetData } from "./ModalGetData";
 import { ModalGetProduct } from "./ModalGetProduct";
-import { calcTotal, calcTotalProductos, getObjectById } from "./utils";
+import { calcTotal, calcTotalProductos, generateOrder, getObjectById } from "./utils";
 
 export const SaleDescription = ({ data, clients, productos }) => {
   console.log('productos en sale: ', productos);
   const params = useParams();
   const [currentFactura, setCurrentFactura] = React.useState(
-    getObjectById(data, "numeroFactura", params?.id)
+    params?.id ? getObjectById(data, "numeroFactura", params?.id) :
+    generateOrder(data)
   );
   const [currentCliente, setCurrentCliente] = React.useState(
     getObjectById(clients, "cedula", currentFactura?.cedulaCliente)
@@ -92,25 +94,75 @@ export const SaleDescription = ({ data, clients, productos }) => {
   };
 
   const handleCantidadChange = (value, index) => {
-    const total = articulos[index].existencia + articulos[index].cantidad
+    console.log('value: ', value);
+    if(isNaN(value)) {
+      alert('Debe ingresar un número');
+      return;
+    }
     const articulos = currentFactura?.articulos || [];
     articulos[index].existencia = (
-      parseInt(articulos[index].existencia) + articulos[index].cantidad + parseInt(value)) - 1;
-    articulos[index].cantidad = value;
+      parseInt(articulos[index].existencia) - value);
+    articulos[index].cantidad = isNaN(value) ? 0 : value;
     articulos[index].precioTotal = (
       articulos[index].cantidad * articulos[index].precio
     ).toFixed(2);
+    // const total = articulos[index].existencia + articulos[index].cantidad
     setCurrentFactura({ ...currentFactura, articulos });
     setTotal(calcTotal(articulos));
     setTotalProductos(calcTotalProductos(articulos));
   };
 
+  const handleSave = () => {
+    const customConfig = {
+      headers: {
+        'Accept': '*/*', 'Content-Type': 'application/json',
+      }
+    };
+    const dataToSend = JSON.stringify(currentFactura);
+    if (currentFactura.articulos.length === 0) {
+      alert('Debe agregar al menos un producto');
+      return;
+    }
+    if(!currentFactura.cedulaCliente) {
+      alert('Debe agregar un cliente');
+      return;
+    }
+    if (params?.id) {
+      axios.put(`${baseURL}/bills/${params?.id}`, dataToSend, customConfig).then((response) => {
+          console.log(response);
+          window.location.href = "/";
+        });
+    } else {
+      axios.post(`${baseURL}/bills`, dataToSend, customConfig).then((response) => {
+        console.log(response);
+        window.location.href = "/";
+      });
+    }
+    // axios.get(`${baseURL}/bills`).then((response) => {
+    //   // console.log('bills', response.data);
+    //   setFacturas(response.data.data);
+    // });
+  }
+  
+
   return (
     <>
       <div>
         <div class="card m-2">
-          <div class="card-body d-flex flex-row">
-            <h4>Órden de venta</h4>
+          <div class="card-body d-flex flex-row justify-content-between">
+            <div className="d-flex flex-row">
+              <h4>Órden de venta</h4>
+            </div>
+            <div className="d-flex flex-row">
+              <button
+                type="button"
+                class="btn btn-primary mx-3 d-flex"
+                onClick={handleSave}
+              >
+                    {params?.id ? 'Editar' : '+ Agregar'}
+              </button>
+
+            </div>
           </div>
         </div>
         <div class="card m-2 p-3">
@@ -208,7 +260,7 @@ export const SaleDescription = ({ data, clients, productos }) => {
                 <tr>
                   <td scope="row">{currentFactura?.numeroFactura}</td>
                   <td>{totalProductos}</td>
-                  <td>{currentFactura?.fecha}</td>
+                  <td>{currentFactura?.fechaFactura}</td>
                   <td>{subtotal.toFixed(2)}</td>
                   <td>{iva.toFixed(2)}</td>
                   <td>{total.toFixed(2)}</td>

@@ -9,8 +9,7 @@ import axios from "axios";
 import { SaleDescription } from "./SaleDescription";
 import { SaleScreen } from "./SaleScreen";
 import { UsersScreen } from "./UsersScreen";
-
-const baseURL = "http://localhost:3001/api";
+import { baseURL } from "./constants/constants";
 
 function App() {
   const [clientes, setClientes] = useState([]);
@@ -19,15 +18,12 @@ function App() {
 
   useEffect(() => {
     axios.get(`${baseURL}/bills`).then((response) => {
-      // console.log('bills', response.data);
       setFacturas(response.data.data);
     });
     axios.get(`${baseURL}/products`).then((response) => {
-      // console.log('products', response.data);
       setProductos(response.data.data);
     });
     axios.get(`${baseURL}/clients`).then((response) => {
-      // console.log('clients', response.data);
       setClientes(response.data.data);
     });
   }, []);
@@ -40,6 +36,12 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/venta/:id" element={
+          <SaleDescription
+            data={facturas}
+            clients={clientes}
+            productos={productos}/>
+        } />
+        <Route path="/venta" element={
           <SaleDescription
             data={facturas}
             clients={clientes}

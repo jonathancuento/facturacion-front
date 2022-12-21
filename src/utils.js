@@ -15,3 +15,27 @@ export const calcTotal = (productos) => {
       return acc + producto.cantidad;
     }, 0);
   };
+
+const getMaxId = (objects) => {
+    return objects.reduce((acc, object) => {
+      return acc > object.numeroFactura ? acc : object.numeroFactura;
+    }, 0);
+  };
+
+  export const generateOrder = (data) => {
+    const today = new Date().toISOString().slice(0, 10);
+    const currentId = getMaxId(data) + 1;
+    console.log('currentId', currentId);
+    return {
+      "numeroFactura": currentId,
+      "fechaFactura": today,
+      "cedulaCliente": "",
+      "vendedor": "ADMIN",
+      "estado": "Pagado",
+      "subtotal": 0,
+      "iva": 0,
+      "total": 0,
+      "articulos": [
+      ]
+  }
+  };

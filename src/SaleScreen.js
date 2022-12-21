@@ -1,3 +1,4 @@
+import axios from "axios";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { facturasColumns } from "./constants/facturas";
@@ -11,8 +12,21 @@ export const SaleScreen = ({data}) => {
     navigate(`/venta/${id}`);
   };
 
+  const handleAdd = () => {
+    navigate(`/venta`);
+  };
+
   const handleDelete = (id) => {
     console.log(id);
+    const customConfig = {
+      headers: {
+        'Accept': '*/*', 'Content-Type': 'application/json',
+      }
+    };
+    axios.delete(`http://localhost:3001/api/bills/${id}`, customConfig).then((response) => {
+      console.log(response);
+    });
+    window.location.href = "/";
   };
 
   const filteredFacturas = data.filter((factura) => {
@@ -49,7 +63,13 @@ export const SaleScreen = ({data}) => {
         <div class="card-body d-flex flex-row justify-content-between">
           <div className="d-flex flex-row">
             <h4>Órdenes de venta</h4>
-            <button type="button" class="btn btn-primary mx-3">+ Agrega</button>
+            <button
+              type="button"
+              class="btn btn-primary mx-3"
+              onClick={handleAdd}
+            >
+                + Agregar
+              </button>
           </div>
           <form class="d-flex">
             <input
