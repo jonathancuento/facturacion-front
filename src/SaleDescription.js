@@ -1,5 +1,5 @@
 import axios from "axios";
-import React from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { clientesColumns } from "./constants/clientes";
 import { baseURL } from "./constants/constants";
@@ -33,7 +33,15 @@ export const SaleDescription = ({ data, clients, productos }) => {
 
   const subtotal = total * 0.88;
   const iva = total * 0.12;
-
+  
+  useEffect(() => {
+    setCurrentFactura({
+      ...currentFactura,
+      subtotal: subtotal.toFixed(2),
+      iva: iva.toFixed(2),
+      total: total.toFixed(2),
+    });
+  }, [total]);
 
   const productosFactura = currentFactura.articulos.map((element, index) => ({
     id: element.id,
@@ -43,7 +51,7 @@ export const SaleDescription = ({ data, clients, productos }) => {
     cantidad: (
       <div className="d-flex justify-content-center">
         <input
-          type="text"
+          type="number"
           class="form-control small-input"
           value={element.cantidad}
           onChange={(e) => !isNaN(e.target.value) && handleCantidadChange(parseInt(e.target.value), index)}
@@ -72,8 +80,14 @@ export const SaleDescription = ({ data, clients, productos }) => {
       existencia: producto?.existencia - 1,
       cantidad: 1,
       precioTotal: producto?.precio,
+      existenciaFixed: producto?.existencia,
     });
-    setCurrentFactura({ ...currentFactura, articulos });
+    setCurrentFactura({
+      ...currentFactura,
+      subtotal: subtotal.toFixed(2),
+      iva: iva.toFixed(2),
+      total: total.toFixed(2),
+      articulos});
     setTotal(calcTotal(articulos));
     setTotalProductos(calcTotalProductos(articulos));
     setModalProdIsOpen(false);
@@ -94,15 +108,24 @@ export const SaleDescription = ({ data, clients, productos }) => {
   };
 
   const handleCantidadChange = (value, index) => {
+    let valToUpdate = value;
     console.log('value: ', value);
-    if(isNaN(value)) {
-      alert('Debe ingresar un número');
+    if(isNaN(valToUpdate)) {
+      valToUpdate=0;
       return;
     }
     const articulos = currentFactura?.articulos || [];
+    if (valToUpdate > parseInt(articulos[index].existenciaFixed)) {
+      alert('No hay suficientes productos en existencia');
+      return;
+    }
+    if (valToUpdate <= 0) {
+      alert('Debe escoger al menos un producto');
+      return;
+    }
     articulos[index].existencia = (
-      parseInt(articulos[index].existencia) - value);
-    articulos[index].cantidad = isNaN(value) ? 0 : value;
+      parseInt(articulos[index].existenciaFixed) - valToUpdate);
+    articulos[index].cantidad = isNaN(valToUpdate) ? 0 : valToUpdate;
     articulos[index].precioTotal = (
       articulos[index].cantidad * articulos[index].precio
     ).toFixed(2);
